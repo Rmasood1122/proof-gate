@@ -16,6 +16,16 @@ finish a turn, whether its completion claims are backed by a command that
 It is **not** another code reviewer. It doesn't judge your code. It judges
 whether Claude's *claim about* the code is true.
 
+## Why a hook, not a skill
+
+Tools that split an agent's commits or chat summary into claims and check them
+are useful — but they run **after the fact**, when you remember to ask, on work
+that's already landed. Proof Gate is a **Stop hook**: it fires **automatically
+at the end of every turn**, before Claude hands the work back, with no prompt
+from you. In warn mode it records a verdict; in block mode (`PROOF_GATE_MODE=block`)
+an unbacked "done" **holds the turn** until the proof exists. It's a gate on the
+live session, not a post-mortem.
+
 ---
 
 ## What it checks
