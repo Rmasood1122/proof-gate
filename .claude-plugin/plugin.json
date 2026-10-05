@@ -1,0 +1,14 @@
+{
+  "name": "proof-gate",
+  "displayName": "Proof Gate",
+  "version": "0.1.2",
+  "description": "Checks that Claude's claims about its own work (tests pass, build succeeds, 'fixed', 'verified') are backed by a command that actually ran and succeeded after the last edit. Warns by default; one env var makes it block.",
+  "author": {
+    "name": "Rehan Masood",
+    "email": "rmasood524@gmail.com"
+  },
+  "homepage": "https://github.com/Rmasood1122/proof-gate",
+  "repository": "https://github.com/Rmasood1122/proof-gate",
+  "license": "MIT",
+  "keywords": ["verification", "evidence", "testing", "quality", "hooks"]
+}

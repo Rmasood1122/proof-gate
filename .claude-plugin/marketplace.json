@@ -1,0 +1,16 @@
+{
+  "name": "proof-gate",
+  "description": "Proof Gate — verify that Claude's claims about its own work are backed by checks that actually ran.",
+  "owner": {
+    "name": "Rehan Masood",
+    "email": "rmasood524@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "proof-gate",
+      "source": "./",
+      "description": "Checks that Claude's claims about its own work are backed by a check that actually ran and succeeded after the last edit. Warn by default, opt-in block.",
+      "keywords": ["verification", "evidence", "testing", "quality", "hooks"]
+    }
+  ]
+}

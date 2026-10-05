@@ -1,0 +1,6 @@
+{"type":"user","message":{"role":"user","content":[{"type":"text","text":"Fix the failing divide() test."}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"I'll look at the function and fix the zero-division handling."},{"type":"tool_use","name":"Edit","input":{"file_path":"calc.py","old_string":"return a/b","new_string":"if b==0: raise ValueError('no'); return a/b"}}]}}
+{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t1","is_error":false,"content":"edited"}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"Now running the suite."},{"type":"tool_use","name":"Bash","input":{"command":"pytest -q"}}]}}
+{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"t2","is_error":false,"content":"5 passed in 0.12s"}],"toolUseResult":{"exitCode":0,"stdout":"5 passed in 0.12s"}}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"All tests pass. The bug is fixed and the suite is green."}]}}
