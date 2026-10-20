@@ -395,44 +395,83 @@ def render(result):
     return "\n".join(lines)
 
 
+def _data_dir():
+    """Per-user plugin state. CLAUDE_PLUGIN_DATA survives plugin updates; the
+    install dir (CLAUDE_PLUGIN_ROOT) is replaced on every update, so nothing
+    durable may live there."""
+    d = os.environ.get("CLAUDE_PLUGIN_DATA")
+    return Path(d) if d else Path.home() / ".proof-gate"
+
+
 def _log_verdict(message):
-    """Append the verdict to a per-user log so warn-mode results are never lost,
-    without feeding anything back to the model."""
+    """Append the verdict to a per-user log so every result is kept, without
+    feeding anything back to the model."""
     try:
         import time
-        logdir = Path(os.environ.get("CLAUDE_PLUGIN_ROOT", Path(__file__).resolve().parent.parent))
-        logfile = logdir / ".proof-gate-verdicts.log"
+        logfile = _data_dir() / "verdicts.log"
+        logfile.parent.mkdir(parents=True, exist_ok=True)
         with logfile.open("a", encoding="utf-8") as fh:
             fh.write(time.strftime("%Y-%m-%d %H:%M:%S ") + message.replace("\n", " | ") + "\n")
     except Exception:
         pass  # logging is best-effort, never fatal
 
 
+ACTIVE_NOTICE = (
+    "Proof Gate is active (warn mode). When Claude says \"done\", \"fixed\" or "
+    "\"tests pass\" without a check that ran after its last edit, you'll see "
+    "\"Proof Gate: UNVERIFIED\" here. To hold the turn instead of warning, set "
+    "PROOF_GATE_MODE=block. This notice shows once; PROOF_GATE_QUIET=1 hides it.")
+
+
+def _first_run_notice():
+    """Return the one-time activation notice, or None. Recorded under the data
+    dir; if that can't be written, return None rather than repeat forever."""
+    if os.environ.get("PROOF_GATE_QUIET"):
+        return None
+    try:
+        marker = _data_dir() / "notified"
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        fd = os.open(marker, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+        os.close(fd)
+    except OSError:
+        return None
+    return ACTIVE_NOTICE
+
+
 def emit_hook_output(result, mode):
     """
     Print the Stop-hook contract and return the exit code.
 
-    CRITICAL loop-safety rule: a Stop hook must stay SILENT on stdout unless it
-    is intentionally blocking. Emitting feedback (additionalContext) on every
-    stop makes Claude respond to it and stop again — an infinite loop. So:
-      • Block (block mode + UNVERIFIED): emit decision:block ONCE. The
-        stop_hook_active guard in main() prevents this from looping.
-      • Everything else: NOTHING on stdout. The verdict goes to stderr (for the
-        user) and a log file. The model is never fed, so it never re-triggers.
+    Two channels, chosen for loop-safety:
+      • additionalContext is NEVER emitted. Feeding the model on Stop makes it
+        respond and stop again — an infinite loop.
+      • systemMessage goes to the USER only (never to the model), so it is safe
+        on every stop. It is the ONLY way a warn-mode verdict reaches a person:
+        stderr with exit 0 goes to Claude Code's debug log, not the screen.
+      • Block (block mode + UNVERIFIED): decision:block ONCE; the
+        stop_hook_active guard in main() prevents a loop.
     """
     verdict = result["verdict"]
     message = render(result)
+    notice = _first_run_notice()
 
     if verdict == "UNVERIFIED" and mode == "block":
         _log_verdict(message)
-        print(json.dumps({"decision": "block", "reason": message}))
+        out = {"decision": "block", "reason": message}
+        if notice:
+            out["systemMessage"] = notice
+        print(json.dumps(out))
         return 0  # JSON decision takes precedence
 
-    # Non-blocking for everything else. Do NOT touch stdout.
+    lines = []
     if verdict != "N/A":
         _log_verdict(message)
-        # stderr is shown to the user by Claude Code but not fed back to Claude.
-        sys.stderr.write(message + "\n")
+    if verdict == "UNVERIFIED":
+        lines.append(message + "\n  (warn mode: not blocking. PROOF_GATE_MODE=block holds the turn.)")
+    if notice:
+        lines.append(notice)
+    if lines:
+        print(json.dumps({"systemMessage": "\n".join(lines)}))
     return 0
 
 

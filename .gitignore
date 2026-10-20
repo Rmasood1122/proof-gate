@@ -1,1 +1,4 @@
 .proof-gate-verdicts.log
+__pycache__/
+*.pyc
+.pytest_cache/

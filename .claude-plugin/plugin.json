@@ -1,8 +1,8 @@
 {
   "name": "proof-gate",
   "displayName": "Proof Gate",
-  "version": "0.1.2",
-  "description": "Checks that Claude's claims about its own work (tests pass, build succeeds, 'fixed', 'verified') are backed by a command that actually ran and succeeded after the last edit. Warns by default; one env var makes it block.",
+  "version": "0.2.0",
+  "description": "Catches Claude saying \"done\", \"fixed\" or \"tests pass\" when nothing ran to prove it. A Stop hook checks every turn for a test/build/lint command that actually ran and succeeded after the last edit; unbacked claims show as \"Proof Gate: UNVERIFIED\" on screen. Warns by default; PROOF_GATE_MODE=block holds the turn until proof exists.",
   "author": {
     "name": "Rehan Masood",
     "email": "rmasood524@gmail.com"
@@ -10,5 +10,11 @@
   "homepage": "https://github.com/Rmasood1122/proof-gate",
   "repository": "https://github.com/Rmasood1122/proof-gate",
   "license": "MIT",
-  "keywords": ["verification", "evidence", "testing", "quality", "hooks"]
+  "keywords": [
+    "verification",
+    "evidence",
+    "testing",
+    "quality",
+    "hooks"
+  ]
 }
