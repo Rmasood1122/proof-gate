@@ -28,6 +28,18 @@ live session, not a post-mortem.
 
 ---
 
+## What you'll see
+
+After install, the first time a turn ends you get one line: *"Proof Gate is
+active (warn mode)…"*. From then on it stays silent on every honest turn and
+prints **`Proof Gate: UNVERIFIED`** with the reason whenever Claude claims
+done/fixed/passing with no check behind it. Nothing is ever fed back to
+Claude in warn mode; the message is for you. Verdicts are also appended to
+`verdicts.log` in the plugin's data directory. `PROOF_GATE_QUIET=1` hides the
+one-time activation line only.
+
+---
+
 ## What it checks
 
 When Claude ends a turn, Proof Gate reads the session transcript and returns one
