@@ -1,3 +1,10 @@
+Works in Claude Code. To install, run these two commands in a Claude Code session:
+
+```
+/plugin marketplace add Rmasood1122/proof-gate
+/plugin install proof-gate@proof-gate
+```
+
 # Proof Gate
 
 **Make Claude prove its own work before it says "done."**
@@ -79,7 +86,7 @@ Teams that want a real gate turn on block mode in CI or in a shared
 ## Install
 
 ```bash
-/plugin marketplace add Rehanrana11/proof-gate
+/plugin marketplace add Rmasood1122/proof-gate
 /plugin install proof-gate@proof-gate
 ```
 
