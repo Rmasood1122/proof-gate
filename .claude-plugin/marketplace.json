@@ -9,7 +9,7 @@
     {
       "name": "proof-gate",
       "source": "./",
-      "description": "Checks that Claude's claims about its own work are backed by a check that actually ran and succeeded after the last edit. Warn by default, opt-in block.",
+      "description": "Works in Claude Code. Checks that Claude's claims about its own work are backed by a check that actually ran and succeeded after the last edit. Warn by default, opt-in block.",
       "keywords": ["verification", "evidence", "testing", "quality", "hooks"]
     }
   ]
